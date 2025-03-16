@@ -75,7 +75,7 @@
       </div>
       <div class="card-body">
         <div class="mb-3">
-          <label for="apiSecret" class="form-label">密码</label>
+          <label for="apiSecret" class="form-label">API密码</label>
           <input type="password" class="form-control" id="apiSecret" placeholder="请输入API密码">
         </div>
         <button id="loginBtn" class="btn btn-primary">登录</button>
@@ -197,7 +197,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // 全局变量
-    let apiBaseUrl = 'https://yxmys-kv-manager-api.mqiancheng.workers.dev'; // 直接设置API地址
+    let apiBaseUrl = 'https://yxmys-kv-manager-api.mqiancheng.workers.dev'; // 更新为新的API地址
     let apiSecret = '';
     let accounts = [];
     let editModal = null;
@@ -246,12 +246,8 @@
       showLoading();
       
       try {
-        // 测试API连接
-        const response = await fetch(`${apiBaseUrl}/accounts`, {
-          headers: {
-            'Authorization': apiSecret
-          }
-        });
+        // 测试API连接 - 使用URL参数进行认证
+        const response = await fetch(`${apiBaseUrl}/accounts?secret=${apiSecret}`);
         
         if (response.ok) {
           // 保存API密码
@@ -286,11 +282,7 @@
       showLoading();
       
       try {
-        const response = await fetch(`${apiBaseUrl}/accounts`, {
-          headers: {
-            'Authorization': window.apiSecret
-          }
-        });
+        const response = await fetch(`${apiBaseUrl}/accounts?secret=${window.apiSecret}`);
         
         if (response.ok) {
           const data = await response.json();
@@ -389,11 +381,10 @@
       showLoading();
       
       try {
-        const response = await fetch(`${apiBaseUrl}/extract-app-pst`, {
+        const response = await fetch(`${apiBaseUrl}/extract-app-pst?secret=${window.apiSecret}`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': window.apiSecret
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ apiUrl })
         });
@@ -451,11 +442,10 @@
         tomorrow.setDate(tomorrow.getDate() + 1);
         const startDate = tomorrow.toISOString().split('T')[0];
         
-        const response = await fetch(`${apiBaseUrl}/accounts`, {
+        const response = await fetch(`${apiBaseUrl}/accounts?secret=${window.apiSecret}`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': window.apiSecret
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             appPst: window.extractedAppPst,
@@ -534,11 +524,10 @@
         // 计算新的签到天数
         const newSignDays = parseInt(account.signDays) + additionalDays;
         
-        const response = await fetch(`${apiBaseUrl}/accounts/${id}`, {
+        const response = await fetch(`${apiBaseUrl}/accounts/${id}?secret=${window.apiSecret}`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': window.apiSecret
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             accountName,
@@ -580,11 +569,10 @@
       try {
         const updateData = { [field]: value };
         
-        const response = await fetch(`${apiBaseUrl}/accounts/${id}`, {
+        const response = await fetch(`${apiBaseUrl}/accounts/${id}?secret=${window.apiSecret}`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': window.apiSecret
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(updateData)
         });
@@ -612,11 +600,8 @@
       showLoading();
       
       try {
-        const response = await fetch(`${apiBaseUrl}/accounts/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': window.apiSecret
-          }
+        const response = await fetch(`${apiBaseUrl}/accounts/${id}?secret=${window.apiSecret}`, {
+          method: 'DELETE'
         });
         
         if (response.ok) {
